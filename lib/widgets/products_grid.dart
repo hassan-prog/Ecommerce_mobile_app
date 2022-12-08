@@ -17,10 +17,14 @@ class ProductsGrid extends StatelessWidget {
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
       ),
-      itemBuilder: ((context, index) => ProductItem(
-            id: products[index].id,
-            title: products[index].title,
-            imageUrl: products[index].imageUrl,
+      itemBuilder: ((ctx, i) => ChangeNotifierProvider.value(
+            // create: (c) => products[i],
+            value: products[i],
+            child: ProductItem(
+              // id: products[i].id,
+              // title: products[i].title,
+              // imageUrl: products[i].imageUrl,
+            ),
           )),
       padding: const EdgeInsets.all(10),
       itemCount: products.length,
