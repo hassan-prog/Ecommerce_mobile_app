@@ -38,7 +38,7 @@ class ProductItem extends StatelessWidget {
                     ? Icons.favorite
                     : Icons.favorite_border),
                 color: Theme.of(context).colorScheme.secondary,
-                onPressed: product.toggleIsFavorite,
+                onPressed: product.toggleFavoriteStatus,
               ),
             ),
             title: Text(
@@ -46,8 +46,23 @@ class ProductItem extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             trailing: IconButton(
-              onPressed: () => {
-                cart.addItem(product.id, product.price, product.title)
+              onPressed: () {
+                cart.addItem(product.id, product.price, product.title);
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Item added to Cart',
+                    ),
+                    duration: Duration(seconds: 2),
+                    action: SnackBarAction(
+                      label: 'UNDO',
+                      onPressed: () {
+                        cart.removeSingleItem(product.id);
+                      },
+                    ),
+                  ),
+                );
               },
               icon: Icon(
                 Icons.shopping_cart,
