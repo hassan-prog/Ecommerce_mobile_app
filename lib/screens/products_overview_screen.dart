@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../widgets/app_drawer.dart';
 import '../screens/cart_screen.dart';
 import '../widgets/products_grid.dart';
 import '../widgets/badge.dart';
 import '../providers/cart.dart';
+import '../providers/products.dart';
 
 enum FavoriteOptions {
   Favorites,
@@ -18,6 +20,25 @@ class ProductsOverviewScreen extends StatefulWidget {
 
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   var _showOnlyFavorite = false;
+  var _isLoading = false;
+  Future<void> _refreshProducts(BuildContext context) async {
+    await Provider.of<Products>(context, listen: false).fetchProducts();
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    setState(() {
+      _isLoading = true;
+    });
+    Provider.of<Products>(context, listen: false)
+        .fetchProducts()
+        .then((_) => setState(() {
+              _isLoading = false;
+            }));
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +85,15 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
           )
         ],
       ),
-      body: ProductsGrid(_showOnlyFavorite),
+      drawer: AppDrawer(),
+      body: _isLoading
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : RefreshIndicator(
+              onRefresh: () => _refreshProducts(context),
+              child: ProductsGrid(_showOnlyFavorite),
+            ),
     );
   }
 }
